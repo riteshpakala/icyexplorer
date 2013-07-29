@@ -5,6 +5,7 @@
 package icyexplorer;
 
 import javafx.scene.PerspectiveCamera;
+import javafx.scene.transform.Rotate;
 
 /**
  *
@@ -13,21 +14,29 @@ import javafx.scene.PerspectiveCamera;
 public class Controls {
     
     private static PerspectiveCamera pc;
+    private static int rot1, dir = 1;
+    private static double degreeS = 90.0, degreeS2 = 0.0, degreeC = 0.0;
+    
     
     public Controls(PerspectiveCamera pc){
         this.pc = pc;
     }
     
-    public void forward(double degreeC, double degreeS){
-        pc.setTranslateZ(pc.getTranslateZ()+50*degreeS);
-        if(degreeS != 1.0)
-        pc.setTranslateX(pc.getTranslateZ()*degreeS);
+    public void forward(){
+        degreeS2 = Math.cos(Math.toRadians(degreeS));
+        
+        if((degreeS >180)||(degreeS > -180 && degreeS < 0)) dir = -1;
+        else dir = 1;
+        
+        pc.setTranslateZ(pc.getTranslateZ()+50*dir);
+        pc.setTranslateX(pc.getTranslateX()+50*degreeS2);
     }
     
-    public void back(double degreeC, double degreeS){
-        pc.setTranslateZ(pc.getTranslateZ()-50*degreeC);
-        if(degreeS != 1.0)
-        pc.setTranslateX(pc.getTranslateZ()*degreeS);
+    public void back(){
+        degreeS2 = Math.cos(Math.toRadians(degreeS));
+        
+        pc.setTranslateZ(pc.getTranslateZ()-50);
+        pc.setTranslateX(pc.getTranslateZ()-50*degreeS2);
     }
     
     public void jump(){
@@ -47,6 +56,7 @@ public class Controls {
     
     public void up(){
         pc.setTranslateY(pc.getTranslateY()-100);
+        
     }
     
     public void down(){
@@ -54,12 +64,48 @@ public class Controls {
         pc.setTranslateY(pc.getTranslateY()+100);
     }
     
-    public void left(double degreeS){
-        pc.setTranslateX(pc.getTranslateX()-50*degreeS);
+    public void left(){
+        pc.setTranslateX(pc.getTranslateX()-50);
     }
     
-    public void right(double degreeS){
-        pc.setTranslateX(pc.getTranslateX()+50*degreeS);
+    public void right(){
+        pc.setTranslateX(pc.getTranslateX()+50);
     }
+    
+    public void lookUp(){
+        pc.getTransforms().add(new Rotate(1, Rotate.X_AXIS));
+    }
+    
+    public void lookDown(){
+        pc.getTransforms().add(new Rotate(-1, Rotate.X_AXIS));
+    }
+    
+    public void lookLeft(){
+        if(degreeS >= 360 || degreeS <= -360) degreeS = 0.0;
+        pc.setRotationAxis(Rotate.Y_AXIS);
+        pc.setRotate(rot1-=1);
+        degreeS+=1;
+        
+    }
+    
+    public void lookRight(){
+        if(degreeS >= 360 || degreeS <= -360) degreeS = 0.0;
+        pc.setRotationAxis(Rotate.Y_AXIS);
+        pc.setRotate(rot1+=1);
+        degreeS-=1;
+        
+    }
+    
+    public double toDegree(double radian){
+        double degree = (radian*180)/Math.PI;
+        return degree;
+        
+    }
+    
+    public void reset(){
+        pc.setTranslateX(0);
+        pc.setTranslateZ(0);
+        degreeS = 90.0;
+    } 
 
 }

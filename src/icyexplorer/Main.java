@@ -12,6 +12,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
+import static javafx.scene.input.KeyCode.DOWN;
+import static javafx.scene.input.KeyCode.UP;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -46,10 +48,15 @@ public class Main extends Application {
     static boolean canMove = false;
     static boolean left = false;
     static boolean right = false;
+    static boolean lookUp = false;
+    static boolean lookDown = false;
+    static boolean lookLeft = false;
+    static boolean lookRight = false;
     
-    static double degreeC = 1.0, degreeS = 1.0, rotationX, rotationY;
-    
+    static double degreeC = 1.0, degreeS = 1.0;
+    static int rotateUD = 0, rotateLR = 0;
     static double x, y, x2, y2;
+    
     @Override public void start(Stage stage) {
         //Group root = new Group(meshView);
         scene = new Scene(new Group(), 800, 800, true);
@@ -84,11 +91,12 @@ public class Main extends Application {
         pointLight.setTranslateY(-100);
         pointLight.setTranslateZ(-1000);
         
+        
         for (int i=0; i!=3; ++i) {
             road[i].setMaterial(material);
             road[i].setTranslateX((i+1)*220);
             road[i].setTranslateZ(3000);
-            road[i].setTranslateY(700);
+            road[i].setTranslateY(900);
             content.add(road[i]);
         };
         
@@ -149,6 +157,26 @@ public class Main extends Application {
                         case SPACE:
                             jumpKey = true;
                         break;
+                            
+                        case UP:
+                            lookUp = true;
+                        break;
+                            
+                        case DOWN:
+                            lookDown = true;
+                        break;
+                            
+                        case LEFT:
+                            lookLeft = true;
+                        break;
+                            
+                        case RIGHT:
+                            lookRight = true;
+                        break;
+                            
+                        case R:
+                            move.reset();
+                        break;
                     }
                 }
             
@@ -164,6 +192,10 @@ public class Main extends Application {
                     left = false;
                     right = false;
                     jumpKey = false;
+                    lookUp = false;
+                    lookDown = false;
+                    lookLeft = false;
+                    lookRight = false;
             }
         });
             
@@ -203,43 +235,6 @@ public class Main extends Application {
     }
     
     public void updateGame(){
-                  
-      scene.setOnMouseDragged(new EventHandler<MouseEvent>(){
-              public void handle(MouseEvent me){
-                    
-                          //float targetAng = (float) getTargetAngle((float)scene.getHeight()/2, (float)scene.getWidth()/2, (float)me.getSceneX(), (float)me.getSceneY());
-                                
-                        x2 = me.getSceneX();
-                        y2 = me.getSceneY();
-                        
-                        rotationX = (x-x2);
-                        
-                         pc.setRotationAxis(Rotate.Y_AXIS);
-                         pc.setRotate(rotationX);
-                         
-                         rotationY = (y-y2);
-                         
-                         if(Math.abs(rotationY)>100){
-                         pc.setRotationAxis(Rotate.X_AXIS);
-                         pc.setRotate(rotationY);
-                         }
-                         
-                         //pc.getTransforms().add(new Rotate(rotationX, 0, 0, 5));
-                         degreeC = Math.cos(390);
-                         degreeS = Math.sin(390);
-                             }
-                        
-                    });
-      
-      scene.setOnMousePressed(new EventHandler<MouseEvent>(){
-              public void handle(MouseEvent me){
-                             x = me.getSceneX();
-                             y = me.getSceneY();
-                        }
-                    });
-      
-     
-      
         scene.setOnMouseExited(
                 new EventHandler<MouseEvent>(){
               public void handle(MouseEvent me){
@@ -249,12 +244,17 @@ public class Main extends Application {
         });
         
         
-        if(forward) {move.forward(degreeC, degreeS);}
-        if(back) {move.back(degreeC, degreeS);}
+        if(forward) {move.forward();}
+        if(back) {move.back();}
         if(up) {move.up();}
         if(down) {move.down();}
-        if(left) {move.left(degreeS);}
-        if(right) {move.right(degreeS);}
+        if(left) {move.left();}
+        if(right) {move.right();}
+        
+        if(lookUp) {move.lookUp();}
+        if(lookDown) {move.lookDown();}
+        if(lookLeft) {move.lookLeft();}
+        if(lookRight) {move.lookRight();}
         
         //Jumping
         if (jumpKey && done == true) {
@@ -271,16 +271,16 @@ public class Main extends Application {
     
     // Maths
 
-   public double getDistanceBetween(float startX, float startY, float endX, float endY) {
-        float dx = endX - startX;
-        float dy = endY - startY;
-        return (float)Math.sqrt(dx*dx + dy*dy);
+   public double getDistanceBetween(double startX, double startY, double endX, double endY) {
+        double dx = endX - startX;
+        double dy = endY - startY;
+        return Math.sqrt(dx*dx + dy*dy);
    }
 
-   public double getTargetAngle(float startX, float startY, float targetX, float targetY) {
-      float dx = targetX - startX;
-        float dy = targetY - startY;
-        return (float)Math.toDegrees(Math.atan2(dy, dx));
+   public double getTargetAngle(double startX, double startY, double targetX, double targetY) {
+      double dx = targetX - startX;
+        double dy = targetY - startY;
+        return Math.toDegrees(Math.atan2(dy, dx));
    }
     
     public static void main(String[] args) {
