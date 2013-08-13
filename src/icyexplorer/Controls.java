@@ -36,7 +36,7 @@ public class Controls {
         degreeS2 = Math.cos(Math.toRadians(degreeS));
         
         pc.setTranslateZ(pc.getTranslateZ()-50);
-        pc.setTranslateX(pc.getTranslateZ()-50*degreeS2);
+        pc.setTranslateX(pc.getTranslateX()-50*degreeS2);
     }
     
     public void jump(){
@@ -65,10 +65,16 @@ public class Controls {
     }
     
     public void left(){
+        degreeS2 = Math.cos(Math.toRadians(degreeS));
+        
+        pc.setTranslateZ(pc.getTranslateX()-50*degreeS2);
         pc.setTranslateX(pc.getTranslateX()-50);
     }
     
     public void right(){
+        degreeS2 = Math.cos(Math.toRadians(degreeS));
+        
+        pc.setTranslateZ(pc.getTranslateZ()+50*degreeS2);
         pc.setTranslateX(pc.getTranslateX()+50);
     }
     
@@ -83,16 +89,16 @@ public class Controls {
     public void lookLeft(){
         if(degreeS >= 360 || degreeS <= -360) degreeS = 0.0;
         pc.setRotationAxis(Rotate.Y_AXIS);
-        pc.setRotate(rot1-=1);
-        degreeS+=1;
+        pc.setRotate(rot1-=2);
+        degreeS+=2;
         
     }
     
     public void lookRight(){
         if(degreeS >= 360 || degreeS <= -360) degreeS = 0.0;
         pc.setRotationAxis(Rotate.Y_AXIS);
-        pc.setRotate(rot1+=1);
-        degreeS-=1;
+        pc.setRotate(rot1+=2);
+        degreeS-=2;
         
     }
     
